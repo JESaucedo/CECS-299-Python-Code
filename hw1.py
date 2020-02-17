@@ -42,25 +42,36 @@ Created on Thu Feb  6 12:55:24 2020
 #    return previous_remainder
 def bezoutCoeffs(a, b):
     #FIXME: IMPLEMENT THIS METHOD.
-        if(a<b):
-            temp = a; a = b;b = temp
+#        if(a<b):
+#            temp = a; a = b;b = temp
+#        temp_a = a
+#        temp_b = b
         first_coefficient = 1 #s0
         initial_second_coefficient = 0 #t0
+        remainder = a%b
+        if(remainder == 0):
+            return first_coefficient,initial_second_coefficient
         initial_div = -int(a/b) #s1
+        print(initial_div)
         second_second_coefficient = 1 #t1
         remainder = a % b
         if(remainder==0):
             return initial_div,second_second_coefficient
         while(remainder!=0):
             
-            the_s_coefficient = first_coefficient - initial_div
+            div_ans = int(a/b)
+            the_s_coefficient = first_coefficient - (initial_div*div_ans)
             first_coefficient = initial_div
-            initial_div = the_s_coefficient(int(a/b))
-            the_t_coefficient = initial_second_coefficient - second_second_coefficient
-            initial_second_coefficient = 
+            initial_div = the_s_coefficient
+            #print("here")
+            the_t_coefficient = initial_second_coefficient - second_second_coefficient*div_ans
+            initial_second_coefficient = second_second_coefficient
+            second_second_coefficient = the_t_coefficient
+            temp = remainder; a = b;b = temp
+            remainder = a % b
             
         
-    
+        return the_s_coefficient,the_t_coefficient
                 
     
     

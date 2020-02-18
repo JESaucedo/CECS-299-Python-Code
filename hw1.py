@@ -37,7 +37,7 @@ def bezoutCoeffs(a, b):
         div_ans = int(a/b)
         the_s_coefficient = first_coefficient - (initial_div*div_ans)
         #first_coefficient is representing S_k-2
-        #the prodcut of initial_div*div_ans is S_k-1
+        #the product of initial_div*div_ans is S_k-1
         first_coefficient = initial_div
         #this replaces S_k-2 with S_k-1
         initial_div = the_s_coefficient

@@ -27,7 +27,11 @@ def bezoutCoeffs(a, b):
     initial_second_coefficient = 0 #t0
     remainder = a%b
     if(remainder == 0):
+        if(a==0):
+            
+            return initial_second_coefficient,first_coefficient
         return first_coefficient,initial_second_coefficient
+        
     initial_div = -int(a/b) #s1
     second_second_coefficient = 1 #t1
     remainder = a % b

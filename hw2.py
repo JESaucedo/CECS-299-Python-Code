@@ -160,7 +160,7 @@ def affineDecrypt(ciphertext, a, b):
         inverseNumber = modinv(a,26)
        
         newDecryptedNumber = str((inverseNumber*(int(digit) - b) % 26)) 
-        #this is the function of converting the message into an encoded message and had to cast digit as an integer to do arithmetic and then cast as string to concantanate
+        #this is the function of converting the encoded message into a decoded message and had to cast digit as an integer to do arithmetic and then cast as string to concantanate
         if(int(newDecryptedNumber) < 10):
             newDecryptedNumber = "0" + newDecryptedNumber #this is to make sure that it remains double digits so it can be used in the function digits2letters method
         #print(newEncryptedNumber)
@@ -168,3 +168,76 @@ def affineDecrypt(ciphertext, a, b):
         start += 2
     decryptedMessage = digits2letters(decryptedNumber)
     return decryptedMessage
+
+def modExp(b, n, m):
+    #FIXME: IMPLEMENT THIS METHOD
+    x = 1
+    base_remainder = b % m
+    expo = n
+    for i in range(0,n):
+        check = int(expo % 2) #This is to check to see if you have a remainder of 1
+        expo = int(expo / 2) #This is to get the binary form of the exponent so we divide by 2 each iteration of the for loop
+        if check == 1:
+            x = (x * base_remainder) % m 
+            #This multiples the number to x when it is 1 in check which represents the position in the binary representation of the exponent
+        base_remainder = (base_remainder * base_remainder) % m 
+        #This is to match the binary respentation of the exponent so that the if statement matches the position     
+    return x
+#Problem 4
+def encryptRSA(m, p, q, e):
+    """encrypts the plaintext m, using RSA and the key (p * q, e)
+    INPUT:  m - plaintext as a string of letters
+            p, q - prime numbers used as part of the key n = p * q to encrypt the ciphertext
+            e - integer satisfying gcd((p-1)*(q-1), e) = 1
+            
+    OUTPUT: The encrypted message as a string of digits
+    """
+#    result = gcd(e,((p-1)(q-1)))
+#    if (result!=1):
+#        raise ValueError("The gcd not equal to 1")
+    n = p * q
+    l = len(m)
+    result = l%2
+    
+    if(result != 0):
+        l = l + 1
+    encryptedRSAMessage = letters2digits(m)
+    print(encryptedRSAMessage)
+    if(result != 0):
+        encryptedRSAMessage = encryptedRSAMessage + "23"
+    start = 0
+    spaceNeeded = l / 2 - 1
+    k = 0
+    encryptedNumber = ""
+    for i in range(0, len(encryptedRSAMessage), 4):
+        digit = encryptedRSAMessage[start : start + 4]  # accessing the 4 digits
+        
+        newEncryptedNumber = str(modExp(int(digit),e,n))
+        if(len(newEncryptedNumber)<4):
+            newEncryptedNumber = "0" + newEncryptedNumber
+        
+        #this is the function of converting the message into a decoded message with RSA and then it has to be converted to a string
+        
+        encryptedNumber += str(newEncryptedNumber)
+        if(k < spaceNeeded):
+            encryptedNumber = encryptedNumber + " "
+            k = k + 1
+        start += 4
+    return encryptedNumber
+        
+"""--------------------- ENCRYPTION TESTER CELL ---------------------------"""
+encrypted1 = encryptRSA("STOP", 43, 59, 13)
+encrypted2 = encryptRSA("HELP", 43, 59, 13)
+encrypted3 = encryptRSA("STOPS", 43, 59, 13)
+print("Encrypted Message:", encrypted1)
+print("Expected: 2081 2182")
+print("Encrypted Message:", encrypted2)
+print("Expected: 0981 0461")
+print("Encrypted Message:", encrypted3)
+print("Expected: 2081 2182 1346")
+
+
+"""--------------------- TEST 2 ---------------------------"""
+encrypted = encryptRSA("UPLOAD", 53, 61, 17)
+print("Encrypted Message:", encrypted)
+print("Expected: 2545 2757 1211")

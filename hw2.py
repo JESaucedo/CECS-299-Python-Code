@@ -65,8 +65,8 @@ def modinv(a,m):
     result = gcd(a,m)
     if (result != 1):
         raise ValueError("The given values are not relatively prime")
-    result = bezoutCoeffs(a,m)
-    while (result < 0):
+    result = bezoutCoeffs(a,m)#This function called is only returning "a" and not "b" as the original did (check hw1.py for the original)
+    while (result < 0):#This is to keep the inverse positive
         result = result + m
         
     return result
@@ -157,16 +157,15 @@ def affineDecrypt(ciphertext, a, b):
     start = 0  #initializing starting index of first digit
     for i in range(0, len(decodedNumbers), 2):
         digit = decodedNumbers[start : start + 2]  # accessing the double digit
-        inverseNumber = modinv(a,26)
-       
-        newDecryptedNumber = str((inverseNumber*(int(digit) - b) % 26)) 
+        inverseNumber = modinv(a,26)#This finds the inverse of the "a" to be used in the formila below
+        newDecryptedNumber = str((inverseNumber*(int(digit) - b) % 26)) #This is the formula needed to decrypt the message given a key
         #this is the function of converting the encoded message into a decoded message and had to cast digit as an integer to do arithmetic and then cast as string to concantanate
         if(int(newDecryptedNumber) < 10):
             newDecryptedNumber = "0" + newDecryptedNumber #this is to make sure that it remains double digits so it can be used in the function digits2letters method
         #print(newEncryptedNumber)
-        decryptedNumber += str(newDecryptedNumber)
-        start += 2
-    decryptedMessage = digits2letters(decryptedNumber)
+        decryptedNumber += str(newDecryptedNumber)#This concatenates the numbers together
+        start += 2#This is needed for getting the next 2 digits
+    decryptedMessage = digits2letters(decryptedNumber)#This returns the decrypted message
     return decryptedMessage
 
 def modExp(b, n, m):
@@ -195,36 +194,32 @@ def encryptRSA(m, p, q, e):
 #    result = gcd(e,((p-1)(q-1)))
 #    if (result!=1):
 #        raise ValueError("The gcd not equal to 1")
-    n = p * q
-    l = len(m)
-    result = l%2
-    
-    if(result != 0):
+    n = p * q #This is needed for the function modExp as this is the modulo number used
+    l = len(m)#This is for getting the length of the text
+    result = l%2#This is for seeing if the length is odd
+    if(result != 0):#This is for checking the length and if the length is odd then add one to it so it becomes even
         l = l + 1
-    encryptedRSAMessage = letters2digits(m)
-    print(encryptedRSAMessage)
-    if(result != 0):
+    encryptedRSAMessage = letters2digits(m)#This is converting the message into an encrypted one
+    #print(encryptedRSAMessage)
+    if(result != 0):#This is for checking to see the length is odd then add 23 (which represents X which is used to keep the spacing even)
         encryptedRSAMessage = encryptedRSAMessage + "23"
-    start = 0
-    spaceNeeded = l / 2 - 1
-    k = 0
-    encryptedNumber = ""
+    start = 0#starting the point for reading the encrypted message
+    spaceNeeded = l / 2 - 1#This is used to display the resulting encrypted message with spaces which is this case is with groups of 4
+    k = 0#counter for the number of spaces
+    encryptedNumber = ""#initializing the variable
     for i in range(0, len(encryptedRSAMessage), 4):
         digit = encryptedRSAMessage[start : start + 4]  # accessing the 4 digits
         
-        newEncryptedNumber = str(modExp(int(digit),e,n))
-        if(len(newEncryptedNumber)<4):
+        newEncryptedNumber = str(modExp(int(digit),e,n)) #This takes the 4 digits and then finds the remainder (look at modExp for a better explanation)
+        if(len(newEncryptedNumber)<4):#This is for making sure that all the numbers are 4 digits long
             newEncryptedNumber = "0" + newEncryptedNumber
-        
-        #this is the function of converting the message into a decoded message with RSA and then it has to be converted to a string
-        
-        encryptedNumber += str(newEncryptedNumber)
-        if(k < spaceNeeded):
+        encryptedNumber += str(newEncryptedNumber)#This is concatenated for the end result
+        if(k < spaceNeeded):#This is how the spaces are added in the returning value
             encryptedNumber = encryptedNumber + " "
             k = k + 1
-        start += 4
+        start += 4#This is incrementing to get the next 4 digits
     return encryptedNumber
-        
+
 """--------------------- ENCRYPTION TESTER CELL ---------------------------"""
 encrypted1 = encryptRSA("STOP", 43, 59, 13)
 encrypted2 = encryptRSA("HELP", 43, 59, 13)

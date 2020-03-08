@@ -123,7 +123,7 @@ def affineEncrypt(text, a, b):
     """
     result = gcd(a,26)
     if(result != 1):
-        raise ValueError("The given key is invalid. The gcd(a,26) must be 1")
+        raise ValueError("The given key is invalid. The gcd(%d,26) must be 1" % (a))
     encodedNumbers = letters2digits(text)
     print(encodedNumbers)
     encryptedNumber = ""
@@ -140,3 +140,31 @@ def affineEncrypt(text, a, b):
         start += 2
     encryptedMessage = digits2letters(encryptedNumber)
     return encryptedMessage
+#Problem 3
+def affineDecrypt(ciphertext, a, b):
+    """decrypts the string 'ciphertext', which was encrypted using an affine transformation key (a, b)
+    INPUT:  ciphertext - a string of encrypted letters
+            a - integer satisfying gcd(a, 26) = 1.  
+            b - integer 
+            
+    OUTPUT: The decrypted message as a string of characters
+    """
+    result = gcd(a,26)
+    if(result != 1):
+        raise ValueError("The given key is invalid. The gcd(%d,26) must be 1" % (a))
+    decodedNumbers = letters2digits(ciphertext)
+    decryptedNumber = ""
+    start = 0  #initializing starting index of first digit
+    for i in range(0, len(decodedNumbers), 2):
+        digit = decodedNumbers[start : start + 2]  # accessing the double digit
+        inverseNumber = modinv(a,26)
+       
+        newDecryptedNumber = str((inverseNumber*(int(digit) - b) % 26)) 
+        #this is the function of converting the message into an encoded message and had to cast digit as an integer to do arithmetic and then cast as string to concantanate
+        if(int(newDecryptedNumber) < 10):
+            newDecryptedNumber = "0" + newDecryptedNumber #this is to make sure that it remains double digits so it can be used in the function digits2letters method
+        #print(newEncryptedNumber)
+        decryptedNumber += str(newDecryptedNumber)
+        start += 2
+    decryptedMessage = digits2letters(decryptedNumber)
+    return decryptedMessage
